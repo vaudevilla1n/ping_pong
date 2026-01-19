@@ -17,6 +17,8 @@
 #define assert_ok(ret, fmt, ...) \
 	do { if (ret) { die(fmt __VA_OPT__(,) __VA_ARGS__); } } while(0)
 
+#define FRAMERATE(f)	(1000000 / (f))
+
 typedef long double f64;
 
 typedef struct {
@@ -183,7 +185,7 @@ typedef struct {
 #define MIN_ENTITY_DELTA_Y	0
 
 #define DEFAULT_ENTITY_PROPERTIES \
-	(entity_t){ .pos = (vec2){ 1, 60 }, .size = (vec2){ 2, 1 }, .delta = (vec2){ 0.005, 0.005 } }
+	(entity_t){ .pos = (vec2){ 1, 60 }, .size = (vec2){ 2, 1 }, .delta = (vec2){ 0.5, 0.5 } }
 
 static inline bool out_of_bounds_x(const f64 x) {
 	return 1 > x || x >= DISPLAY_WIDTH;
@@ -296,7 +298,7 @@ void draw_info_line(const entity_t *e, const command_state_t command) {
 	move(vec2_new(0, DISPLAY_HEIGHT));
 
 	const vec2 entity_end = vec2_add(e->pos, e->size);
-	printf("entity((%Lf, %Lf), (%Lf, %Lf)) delta(%Lf, %Lf) display: %d x %d (%s)\n",
+	printf("entity((%.3Lf, %.3Lf), (%.3Lf, %.3Lf)) delta(%.3Lf, %.3Lf) display: %d x %d (%s)\n",
 			e->pos.x, e->pos.y,
 			entity_end.x, entity_end.y,
 			e->delta.x, e->delta.y,
@@ -385,6 +387,8 @@ int main(void) {
 
 		if (command == QUIT)
 			break;
+
+		usleep(FRAMERATE(60));
 	}
 
 	end_graphics();
